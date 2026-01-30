@@ -5,8 +5,10 @@ import {
   TrendingDown,
   DollarSign,
   PiggyBank,
+  Send,
   File,
-  FileTextIcon,
+  FileText,
+  Shield,
 } from "lucide-react";
 import CurrentMoneySplitWidget from '@/components/CurrentMoneySplitWidget'
 import GoalProgress from "@/components/Dashboard/GoalProgress";
@@ -16,7 +18,7 @@ import TransactionItem from "@/components/Dashboard/TransactionItem";
 
 export default function Dashboard() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-[#141414]">
       {/* Header */}
       <header className="bg-(--background) shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -43,7 +45,7 @@ export default function Dashboard() {
             detail1="+$300"
             detail1Color="text-red-500"
             detail2="+25%"
-            icon={Send}
+            icon={<Send className="w-5 h-5" />}
             showTrend={true}
           />
           <StatCard
@@ -52,7 +54,7 @@ export default function Dashboard() {
             detail1="+$90"
             detail1Color="text-red-500"
             detail2="+33%"
-            icon={PiggyBank}
+            icon={<PiggyBank className="w-5 h-5" />}
             showTrend={true}
           />
           <StatCard
@@ -60,14 +62,14 @@ export default function Dashboard() {
             value="$180"
             detail1="3 bills"
             detail2="This month"
-            icon={FileText}
+            icon={<FileText className="w-5 h-5" />}
           />
           <StatCard
             title="Insurance"
             value="$60"
             detail1="2 policies"
             detail2="Active"
-            icon={Shield}
+            icon={<Shield className="w-5 h-5" />}
           />
         </div>
 
@@ -158,7 +160,7 @@ export default function Dashboard() {
           >
             <div className="flex items-center gap-2 mb-4">
               <span>
-                <FileTextIcon className="w-6 h-6 text-[var(--accent)]" />
+                <FileText className="w-6 h-6 text-[var(--accent)]" />
               </span>
               <h2 className="text-xl font-bold text-(--foreground)">
                 Bills by Type

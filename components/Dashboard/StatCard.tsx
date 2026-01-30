@@ -1,31 +1,45 @@
+interface StatCardProps {
+  title: string;
+  value: string;
+  detail1?: string;
+  detail1Color?: string;
+  detail2?: string;
+  icon: React.ReactNode;
+  showTrend?: boolean;
+}
+
+import { TrendingUp } from "lucide-react";
+
 export default function StatCard({
   title,
   value,
-  change,
+  detail1,
+  detail1Color = "text-gray-500",
+  detail2,
   icon,
-  trend,
-}: {
-  title: string;
-  value: string;
-  change: string;
-  icon: React.ReactNode;
-  trend: "up" | "down" | "neutral";
-}) {
+  showTrend,
+}: StatCardProps) {
   return (
     <div
-      className="rounded-xl shadow-md p-6"
+      className="rounded-2xl shadow-md p-6 border border-[#FFFFFF14] hover:border-white/30 transition-colors duration-300"
       style={{ backgroundImage: "var(--card)" }}
     >
-      <div className="flex items-center justify-between mb-2">
-        <div className="text-gray-600 text-sm">{title}</div>
-        <div className="text-[var(--accent)]">{icon}</div>
+      <div className="flex items-center justify-between mb-4">
+        <div className="text-gray-400 text-sm font-medium">{title}</div>
+        <div className="p-2 rounded-lg bg-white/5 text-[var(--accent)]">
+          {icon}
+        </div>
       </div>
-      <div
-        className={`text-sm ${trend === "up" ? "text-green-600" : trend === "down" ? "text-red-600" : "text-gray-600"}`}
-      >
-        {change}
+      <div className="space-y-1">
+        <div className="text-3xl font-bold text-(--foreground)">{value}</div>
+        <div className="flex items-center gap-2 text-sm">
+          {detail1 && (
+            <span className={`font-semibold ${detail1Color}`}>{detail1}</span>
+          )}
+          {showTrend && <TrendingUp className="w-4 h-4 text-green-500" />}
+          {detail2 && <span className="text-gray-500">{detail2}</span>}
+        </div>
       </div>
-      <div className="text-3xl font-bold text-(--foreground) mb-1">{value}</div>
     </div>
   );
 }
