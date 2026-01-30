@@ -7,6 +7,9 @@ import {
   PiggyBank,
   File,
   FileTextIcon,
+  Send,
+  Shield,
+  FileText
 } from "lucide-react";
 import CurrentMoneySplitWidget from '@/components/CurrentMoneySplitWidget'
 import GoalProgress from "@/components/Dashboard/GoalProgress";
@@ -14,25 +17,13 @@ import SplitBar from "@/components/Dashboard/SplitBar";
 import StatCard from "@/components/Dashboard/StatCard";
 import TransactionItem from "@/components/Dashboard/TransactionItem";
 
+import DashboardHeader from "@/components/Dashboard/DashboardHeader";
+
 export default function Dashboard() {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="bg-(--background) shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center space-x-4">
-            <Link
-              href="/"
-              className="text-(--foreground) hover:text-(--foreground)"
-            >
-              <ArrowLeft className="w-6 h-6" />
-            </Link>
-            <h1 className="text-2xl font-bold text-(--foreground)">
-              Dashboard
-            </h1>
-          </div>
-        </div>
-      </header>
+      <DashboardHeader />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Stats Overview */}
@@ -40,34 +31,30 @@ export default function Dashboard() {
           <StatCard
             title="Total Sent"
             value="$1,200"
-            detail1="+$300"
-            detail1Color="text-red-500"
-            detail2="+25%"
-            icon={Send}
-            showTrend={true}
+            change="+$300 (+25%)"
+            trend="up"
+            icon={<Send className="w-6 h-6" />}
           />
           <StatCard
             title="Savings"
             value="$360"
-            detail1="+$90"
-            detail1Color="text-red-500"
-            detail2="+33%"
-            icon={PiggyBank}
-            showTrend={true}
+            change="+$90 (+33%)"
+            trend="up"
+            icon={<PiggyBank className="w-6 h-6" />}
           />
           <StatCard
             title="Bills Paid"
             value="$180"
-            detail1="3 bills"
-            detail2="This month"
-            icon={FileText}
+            change="3 bills (This month)"
+            trend="neutral"
+            icon={<FileText className="w-6 h-6" />}
           />
           <StatCard
             title="Insurance"
             value="$60"
-            detail1="2 policies"
-            detail2="Active"
-            icon={Shield}
+            change="2 policies (Active)"
+            trend="neutral"
+            icon={<Shield className="w-6 h-6" />}
           />
         </div>
 

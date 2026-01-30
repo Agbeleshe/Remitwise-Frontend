@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Footer from "@/components/footer";
-import FinalCallToAction from "@/components/FinalCallToAction";
-import Header from "@/components/Header";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,11 +17,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} starry-bg min-h-screen pt-20`}>
-        <Header />
+      <body className={`${inter.className} starry-bg min-h-screen`}>
         {children}
-        <FinalCallToAction />
-        <Footer />
       </body>
     </html>
   );
