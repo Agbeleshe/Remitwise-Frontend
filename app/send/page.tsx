@@ -1,9 +1,10 @@
-'use client'
+"use client";
 
 import React, { useState } from 'react'
 import EmergencyTransferModal from './components/EmergencyTransferModal'
 import AmountCurrencySection from './components/AmountCurrencySection'
-
+import AutomaticSplitCard from "./components/AutomaticSplitCard";
+import SendHeader from "./components/SendHeader";
 import Link from 'next/link'
 import { ArrowLeft, Send, AlertCircle, Zap } from 'lucide-react'
 
@@ -23,6 +24,10 @@ export default function SendMoney() {
     // Handle send remittance
     console.log(`Send ${amount} ${currency}`)
   }
+
+
+export default function SendMoney() {
+  const [showEmergencyModal, setShowEmergencyModal] = useState(false);
 
   return (
     <div className="min-h-screen bg-black">
@@ -96,6 +101,23 @@ export default function SendMoney() {
               </div>
               <p className="text-xs text-yellow-600 mt-4">⚠️ Emergency transfers incur a 2% processing fee and bypass your automatic split rules.</p>
             </div>
+          </form>
+
+          {/* Emergency Mode */}
+          <div className="mt-8 pt-8 border-t border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              Emergency Transfer
+            </h3>
+            <p className="text-gray-600 mb-4">
+              Need to send money urgently? Use emergency mode for priority
+              processing.
+            </p>
+            <button
+              className="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700 transition"
+              onClick={() => setShowEmergencyModal(true)}
+            >
+              Emergency Transfer
+            </button>
           </div>
 
           {/* Right Column - Automatic Split Preview - Placeholder */}
@@ -181,6 +203,5 @@ export default function SendMoney() {
         onClose={() => setShowEmergencyModal(false)}
       />
     </div>
-  )
+  );
 }
-
