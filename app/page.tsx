@@ -6,14 +6,16 @@ import {
   Shield,
   Users,
   TrendingUp,
-  Settings,
 } from "lucide-react";
+import FAQSection from "@/components/FAQSection";
+import FeatureSection from "@/components/FeatureSection";
+import WhyChooseStellar from "@/components/WhyChooseStellar";
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Header */}
-      <header className="bg-white shadow-sm">
+      {/* <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
@@ -50,7 +52,7 @@ export default function Home() {
             </button>
           </div>
         </div>
-      </header>
+      </header> */}
 
       {/* Hero Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -64,45 +66,27 @@ export default function Home() {
           </p>
         </div>
 
-        {/* Feature Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          <FeatureCard
-            icon={<Send className="w-8 h-8" />}
-            title="Send Money"
-            description="Fast, low-cost transfers using Stellar network with on-chain transaction proof"
-            href="/send"
-          />
-          <FeatureCard
-            icon={<PiggyBank className="w-8 h-8" />}
-            title="Smart Money Split"
-            description="Automatically allocate remittance into spending, savings, bills, and insurance"
-            href="/split"
-          />
-          <FeatureCard
-            icon={<TrendingUp className="w-8 h-8" />}
-            title="Savings Goals"
-            description="Goal-based savings for education, medical, marriage with visual progress tracking"
-            href="/goals"
-          />
-          <FeatureCard
-            icon={<FileText className="w-8 h-8" />}
-            title="Bill Payments"
-            description="Automated bill payments for electricity, school fees, rent with reminders"
-            href="/bills"
-          />
-          <FeatureCard
-            icon={<Shield className="w-8 h-8" />}
-            title="Micro-Insurance"
-            description="Health and emergency coverage with auto-paid premiums from remittance"
-            href="/insurance"
-          />
-          <FeatureCard
-            icon={<Users className="w-8 h-8" />}
-            title="Family Wallets"
-            description="Separate wallets for family members with spending limits and approvals"
-            href="/family"
-          />
+        {/* Highlight Feature Cards - Instant Remittance & Smart Allocation */}
+        <div className="bg-[#0a0a0a] rounded-3xl p-6 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <HighlightCard
+              icon={<Send className="w-6 h-6" />}
+              title="Instant Remittance"
+              description="Send money across borders in seconds with minimal fees. Our Stellar-powered infrastructure ensures your transfers are fast, secure, and transparent."
+            />
+            <HighlightCard
+              icon={<PiggyBank className="w-6 h-6" />}
+              title="Smart Allocation"
+              description="Automatically split remittances into spending, savings, bills, and insurance. Configure once and every transfer follows your rules automatically."
+            />
+          </div>
         </div>
+
+        {/* Dark Feature Cards */}
+        <FeatureSection />
+        
+        {/* Why Choose Stellar Section */}
+        <WhyChooseStellar />
 
         {/* Quick Actions */}
         <div className="bg-white rounded-xl shadow-lg p-8">
@@ -140,29 +124,33 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* FAQ Section */}
+      <FAQSection />
     </main>
   );
 }
 
-function FeatureCard({
+function HighlightCard({
   icon,
   title,
   description,
-  href,
 }: {
   icon: React.ReactNode;
   title: string;
   description: string;
-  href: string;
 }) {
   return (
-    <Link
-      href={href}
-      className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition"
-    >
-      <div className="text-blue-600 mb-4">{icon}</div>
-      <h3 className="text-xl font-semibold text-gray-900 mb-2">{title}</h3>
-      <p className="text-gray-600">{description}</p>
-    </Link>
+    <div className="bg-[#141414] border border-[#232323] rounded-2xl p-7 pb-12 flex items-start gap-4">
+      <div className="w-11 h-11 bg-[#1c1010] border border-[#2a1515] rounded-lg flex items-center justify-center flex-shrink-0">
+        <div className="text-red-500">
+          {icon}
+        </div>
+      </div>
+      <div>
+        <h3 className="text-xl font-bold text-white">{title}</h3>
+        <p className="text-[#808080] text-sm leading-6 mt-3">{description}</p>
+      </div>
+    </div>
   );
 }
