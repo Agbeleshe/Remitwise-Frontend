@@ -14,27 +14,21 @@ import CurrentMoneySplitWidget from '@/components/CurrentMoneySplitWidget'
 import GoalProgress from "@/components/Dashboard/GoalProgress";
 import SplitBar from "@/components/Dashboard/SplitBar";
 import StatCard from "@/components/Dashboard/StatCard";
-import TransactionItem from "@/components/Dashboard/TransactionItem";
+
+import SavingsByGoalWidget from "@/components/Dashboard/SavingsByGoalWidget";
+import TransactionHistoryItem, { Transaction } from "@/components/Dashboard/TransactionHistoryItem";
+import MoneyDistributionWidget from "@/components/Dashboard/MoneyDistributionWidget";
+import RecentTransactionsWidget from "@/components/Dashboard/RecentTransactionsWidget";
+import QuickActions from "@/components/Dashboard/QuickActions";
+
+
+import DashboardHeader from "@/components/Dashboard/DashboardHeader";
 
 export default function Dashboard() {
   return (
     <div className="min-h-screen bg-[#141414]">
       {/* Header */}
-      <header className="bg-(--background) shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center space-x-4">
-            <Link
-              href="/"
-              className="text-(--foreground) hover:text-(--foreground)"
-            >
-              <ArrowLeft className="w-6 h-6" />
-            </Link>
-            <h1 className="text-2xl font-bold text-(--foreground)">
-              Dashboard
-            </h1>
-          </div>
-        </div>
-      </header>
+      <DashboardHeader />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Stats Overview */}
@@ -73,85 +67,27 @@ export default function Dashboard() {
           />
         </div>
 
-        {/* Money Split Visualization */}
+        {/* Quick Actions Panel */}
+        <div className="mb-8">
+          <QuickActions />
+        </div>
+
         {/* Money Split Visualization */}
         <div className="mb-8">
           <CurrentMoneySplitWidget />
         </div>
+        <div className="mb-8">
+          <MoneyDistributionWidget />
+        </div>
 
         {/* Recent Transactions */}
-        <div
-          className="rounded-xl shadow-md p-6 mb-8"
-          style={{ backgroundImage: "var(--card)" }}
-        >
-          <h2 className="text-xl font-bold text-(--foreground) mb-4">
-            Recent Transactions
-          </h2>
-          <div className="space-y-4">
-            <TransactionItem
-              date="2024-01-15"
-              description="Remittance to Family"
-              amount="$300"
-              status="completed"
-            />
-            <TransactionItem
-              date="2024-01-10"
-              description="Bill Payment - Electricity"
-              amount="$50"
-              status="completed"
-            />
-            <TransactionItem
-              date="2024-01-08"
-              description="Savings Goal - Education"
-              amount="$100"
-              status="completed"
-            />
-          </div>
-          <div className="mt-6">
-            <Link
-              href="/transactions"
-              className="text-blue-600 hover:text-blue-700 font-semibold"
-            >
-              View All Transactions →
-            </Link>
-          </div>
+        <div className="mb-8">
+          <RecentTransactionsWidget />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Savings Goals Progress */}
-          <div
-            className="rounded-2xl shadow-md p-6 border border-[#FFFFFF14] hover:border-white/30 transition-colors duration-300"
-            style={{ backgroundImage: "var(--card)" }}
-          >
-            <div className="flex items-center gap-2 mb-4">
-              <span>
-                <PiggyBank className="w-6 h-6 text-[var(--accent)]" />
-              </span>
-              <h2 className="text-xl font-bold text-(--foreground)">
-                Savings by Goals
-              </h2>
-            </div>
-            <div className="space-y-4">
-              <GoalProgress
-                name="Emergency Fund"
-                current={331.2}
-                target={720}
-                gradient={{ from: "#B91C1C", to: "#991B1B" }}
-              />
-              <GoalProgress
-                name="Education Fund"
-                current={194}
-                target={550}
-                gradient={{ from: "#991B1B", to: "#7F1D1D" }}
-              />
-              <GoalProgress
-                name="Medical Fund"
-                current={58.9}
-                target={310}
-                gradient={{ from: "#7F1D1D", to: "#5F1515" }}
-              />
-            </div>
-          </div>
+          <SavingsByGoalWidget />
 
           {/* Bills by Type */}
           <div
@@ -198,4 +134,3 @@ export default function Dashboard() {
     </div>
   );
 }
-

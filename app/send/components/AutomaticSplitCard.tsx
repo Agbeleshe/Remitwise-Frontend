@@ -43,7 +43,7 @@ export default function AutomaticSplitCard() {
   ]
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Main Split Card */}
       <div className="bg-[#141414] rounded-3xl p-6 border border-gray-800/50 shadow-2xl">
         <div className="flex items-center space-x-3 mb-4">
