@@ -16,6 +16,8 @@ import WalletDropdown from "@/components/WalletDropdown";
 import WhyChooseStellar from "@/components/WhyChooseStellar";
 import Hero from "@/components/Hero";
 import ValueProposition from "@/components/ValueProposition";
+import StatsSection from "@/components/StatsSection";
+
 
 
 export default function Home() {
@@ -80,7 +82,7 @@ export default function Home() {
       <Hero/>
 
       
-
+  <StatsSection />
         {/* Quick Actions */}
         {/* <div className="bg-white rounded-xl shadow-lg p-8">
           <h3 className="text-2xl font-bold text-gray-900 mb-6">
