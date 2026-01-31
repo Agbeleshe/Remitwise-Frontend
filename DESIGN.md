@@ -20,3 +20,10 @@ This batch includes the following UI/UX designs:
 | #27 | Redesign The Bill Payments Page |
 
 See the Figma link above for wireframes, user flows, and visual design for these screens.
+
+## Logo Design Submission
+
+Doc reference of changes made: https://docs.google.com/document/d/1uaXCKiOWRoE6t2HR9t-_829gzPsySXC_MMnfVGQogcg/edit?usp=sharing
+
+Figma design: https://www.figma.com/design/DCcu9gcnC3P69wrYcwVyYl/Remitwise?node-id=175-7413&t=xJDctboafzmPdm5u-1
+
