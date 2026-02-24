@@ -4,6 +4,8 @@
 
 Idempotency keys prevent duplicate operations from being executed when a client retries a request (e.g., due to network issues, double-clicks, or timeouts). This is critical for write operations like creating remittances or allocating funds.
 
+**Status**: Implemented and ready for production use (with Redis migration recommended for multi-instance deployments).
+
 ## How It Works
 
 1. Client generates a unique idempotency key (e.g., UUID)

@@ -1,6 +1,6 @@
 # Idempotency Module
 
-Provides idempotency key support for critical write endpoints to prevent duplicate operations.
+Provides idempotency key support for critical write endpoints to prevent duplicate operations from double-clicks or network retries.
 
 ## Quick Start
 
