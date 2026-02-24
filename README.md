@@ -152,6 +152,49 @@ ANCHOR_PLATFORM_API_KEY=
 
 See `.env.example` for a complete list of configuration options.
 
+### Running the Backend
+
+The backend API routes run automatically with the Next.js development server:
+
+```bash
+# Development mode (with hot reload)
+npm run dev
+
+# Production build
+npm run build
+npm start
+```
+
+The API will be available at `http://localhost:3000/api/*`
+
+### Authentication Flow
+
+RemitWise uses wallet-based authentication with the following flow:
+
+1. **Wallet Connect**: User connects their Stellar wallet (Freighter, Albedo, etc.)
+   - Frontend detects wallet extension
+   - User authorizes connection
+   - Public key is retrieved
+
+2. **Nonce Generation**: 
+   - Client requests nonce from `/api/auth/nonce`
+   - Server generates unique nonce and stores temporarily
+   - Nonce returned to client
+
+3. **Signature Verification**:
+   - Client signs nonce with wallet private key
+   - Signed message sent to `/api/auth/verify`
+   - Server verifies signature matches public key
+   - If valid, session token is created
+
+4. **Session Management**:
+   - JWT token stored in HTTP-only cookie
+   - Token includes user's public key and expiration
+   - Subsequent requests include token for authentication
+   - Token validated on protected API routes
+
+**Protected Routes**: All `/api/transactions/*`, `/api/contracts/*` endpoints require valid session.
+
 ## Design Notes
 
 - All forms are currently disabled (placeholders)
