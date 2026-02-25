@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getActivePolicies } from "@/lib/contracts/insurance";
+import { getTotalMonthlyPremium } from "@/lib/contracts/insurance";
 import { validateAuth, unauthorizedResponse } from "@/lib/auth";
 
-// GET /api/insurance
-// Returns active policies for the authenticated owner.
-// Query param: ?owner=G... (Stellar account address)
+// GET /api/insurance/total-premium?owner=G...
 export async function GET(request: NextRequest) {
   if (!validateAuth(request)) {
     return unauthorizedResponse();
@@ -21,8 +19,8 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const policies = await getActivePolicies(owner);
-    return NextResponse.json({ policies });
+    const totalMonthlyPremium = await getTotalMonthlyPremium(owner);
+    return NextResponse.json({ totalMonthlyPremium });
   } catch (error: unknown) {
     const err = error as { code?: string };
 
@@ -30,9 +28,9 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Invalid Stellar address" }, { status: 400 });
     }
 
-    console.error("[GET /api/insurance]", error);
+    console.error("[GET /api/insurance/total-premium]", error);
     return NextResponse.json(
-      { error: "Failed to fetch policies from contract" },
+      { error: "Failed to fetch total premium from contract" },
       { status: 502 }
     );
   }
