@@ -12,7 +12,7 @@ const billSchema = z.object({
   coverageAmount: z.coerce.number().positive().gt(0)
 });
 
-const addInsuranceHandler = validatedRoute(billSchema, async (req, data) => {
+const addInsuranceHandler = validatedRoute(billSchema, "body", async (req, data) => {
 
   // DB logic here
 
