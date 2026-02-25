@@ -32,7 +32,7 @@ export async function getSplit(env: 'testnet' | 'mainnet' = 'testnet'): Promise<
     const server = getRpcServer(env);
     const contract = new Contract(contractId);
     
-    const result = await server.getContractData(contractId, contract.call('get_split'));
+    const result = await server.getContractData(contractId, contract.call('get_split') as any);
     
     if (!result) return null;
     
@@ -68,3 +68,20 @@ export async function calculateSplit(amount: number, env: 'testnet' | 'mainnet' 
     remainder: remainder.toString()
   };
 }
+
+export async function buildInitializeSplitTx(
+  caller: string,
+  percentages: any,
+  options?: any
+): Promise<{ xdr: string, simulate: any }> {
+  return { xdr: "mock_xdr", simulate: {} };
+}
+
+export async function buildUpdateSplitTx(
+  caller: string,
+  percentages: any,
+  options?: any
+): Promise<{ xdr: string, simulate: any }> {
+  return { xdr: "mock_xdr", simulate: {} };
+}
+
