@@ -2,23 +2,24 @@ import { NextResponse } from 'next/server'
 import { getTranslator } from '../../../../../../lib/i18n'
 import { buildPayBillTx } from '../../../../../../lib/contracts/bill-payments'
 import { StrKey } from '@stellar/stellar-sdk'
+import { ApiRouteError, withApiErrorHandler } from '@/lib/api/error-handler'
 
-export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  try {
-    const t = getTranslator(req.headers.get('accept-language'));
+export const POST = withApiErrorHandler(async function POST(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const t = getTranslator(req.headers.get('accept-language'));
 
-    const caller = req.headers.get('x-user')
-    if (!caller || !StrKey.isValidEd25519PublicKey(caller)) {
-      return NextResponse.json({ error: t('errors.unauthorized_missing_header') }, { status: 401 })
-    }
-
-    const { id: billId } = await params;
-    if (!billId) return NextResponse.json({ error: t('errors.missing_bill_id') }, { status: 400 })
-
-    const xdr = await buildPayBillTx(caller, billId)
-    return NextResponse.json({ xdr })
-  } catch (err: any) {
-    const t = getTranslator(req.headers.get('accept-language'));
-    return NextResponse.json({ error: err?.message || t('errors.internal_server_error') }, { status: 500 })
+  const caller = req.headers.get('x-user')
+  if (!caller || !StrKey.isValidEd25519PublicKey(caller)) {
+    throw new ApiRouteError(401, 'UNAUTHORIZED', t('errors.unauthorized_missing_header') || 'Unauthorized')
   }
-}
+
+  const { id: billId } = await params;
+  if (!billId) {
+    throw new ApiRouteError(400, 'VALIDATION_ERROR', t('errors.missing_bill_id') || 'Missing bill id')
+  }
+
+  const xdr = await buildPayBillTx(caller, billId)
+  return NextResponse.json({ xdr })
+})

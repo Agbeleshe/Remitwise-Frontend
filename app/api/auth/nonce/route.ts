@@ -1,27 +1,56 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { randomBytes } from 'crypto';
+import { storeNonce } from '@/lib/auth/nonce-store';
 import { getTranslator } from '@/lib/i18n';
-import crypto from 'crypto';
-import { setNonce } from '@/lib/auth-cache';
 
-export async function GET(request: Request) {
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
+/**
+ * GET /api/auth/nonce
+ * Generate a nonce for signature-based authentication
+ * 
+ * Query Parameters:
+ * - address: Stellar address requesting the nonce
+ */
+export async function GET(request: NextRequest) {
     try {
-        const { searchParams } = new URL(request.url);
-        const address = searchParams.get('address');
+        const address = request.nextUrl.searchParams.get('address');
+        const t = getTranslator(request.headers.get('accept-language'));
 
         if (!address) {
-            const t = getTranslator(request.headers.get('accept-language'));
-            return NextResponse.json({ error: t('errors.address_required') }, { status: 400 });
+            return NextResponse.json(
+                { error: t('errors.address_required') },
+                { status: 400 }
+            );
         }
 
-        // Generate a secure random 32-byte nonce and convert to hex
-        const nonce = crypto.randomBytes(32).toString('hex');
+        // Validate Stellar address format (G + 55 alphanumeric characters)
+        if (!/^G[A-Z0-9]{55}$/.test(address)) {
+            return NextResponse.json(
+                { error: t('errors.invalid_address_format') || 'Invalid Stellar address format' },
+                { status: 400 }
+            );
+        }
 
-        // Store in our temporary cache
-        setNonce(address, nonce);
+        // Generate a random nonce
+        const nonce = randomBytes(32).toString('hex');
 
-        return NextResponse.json({ nonce });
+        // Store nonce with 5 minute expiration
+        storeNonce(address, nonce);
+
+        return NextResponse.json({
+            nonce,
+            address,
+            expiresAt: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
+        });
     } catch (error) {
+        console.error('Error generating nonce:', error);
         const t = getTranslator(request.headers.get('accept-language'));
-        return NextResponse.json({ error: t('errors.internal_server_error') }, { status: 500 });
+        return NextResponse.json(
+            { error: t('errors.internal_server_error') },
+            { status: 500 }
+        );
     }
 }

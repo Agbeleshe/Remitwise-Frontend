@@ -1,84 +1,106 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { Keypair, StrKey } from '@stellar/stellar-sdk';
+import { getNonce, deleteNonce } from '@/lib/auth/nonce-store';
 import { getTranslator } from '@/lib/i18n';
-import { Keypair } from '@stellar/stellar-sdk';
-import { getAndClearNonce } from '@/lib/auth-cache';
 import {
   createSession,
   getSessionCookieHeader,
 } from '../../../../lib/session';
 
+// Force dynamic rendering for this route
 export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 /**
- * Wallet-based auth flow:
- * 1. Frontend: user connects wallet (e.g. Freighter), gets address.
- * 2. Frontend: build a nonce message (e.g. "Sign in to Remitwise at {timestamp}").
- * 3. Frontend: sign message with wallet
- * 4. Frontend: POST /api/auth/login with { address, signature }
- * 5. Backend: verify with Keypair using stored server memory nonce; create encrypted session cookie.
+ * POST /api/auth/login
+ * Verify a signature and authenticate user
+ * 
+ * Request Body:
+ * - address: Stellar public key
+ * - message: The nonce that was signed
+ * - signature: Base64-encoded signature
  */
-
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { address, signature } = body;
+    const { address, message, signature } = body;
+    const t = getTranslator(request.headers.get('accept-language'));
 
-    if (!address || !signature) {
-      const t = getTranslator(request.headers.get('accept-language'));
+    if (!address || !message || !signature) {
       return NextResponse.json(
-        { error: t('errors.address_signature_required') },
+        { error: t('errors.address_signature_required') || 'Missing required fields: address, message, signature' },
         { status: 400 }
       );
     }
 
-    // Retrieve and clear nonce — returns null if missing or expired
-    const nonce = getAndClearNonce(address);
-    if (!nonce) {
-      const t = getTranslator(request.headers.get('accept-language'));
+    // Validate Stellar address format
+    if (!StrKey.isValidEd25519PublicKey(address)) {
       return NextResponse.json(
-        { error: t('errors.nonce_expired') },
+        { error: t('errors.invalid_address_format') || 'Invalid Stellar address format' },
+        { status: 400 }
+      );
+    }
+
+    // Verify nonce exists and hasn't expired
+    const storedNonce = getNonce(address);
+    if (!storedNonce || storedNonce !== message) {
+      return NextResponse.json(
+        { error: t('errors.nonce_expired') || 'Invalid or expired nonce' },
         { status: 401 }
       );
     }
 
-    // Verify signature
     try {
+      // Verify the signature
       const keypair = Keypair.fromPublicKey(address);
-      // Nonce is verified using utf8 encoding to match the frontend signature
-      const isValid = keypair.verify(
-        Buffer.from(nonce, 'utf8'),
-        Buffer.from(signature, 'base64')
-      );
+      const messageBuffer = Buffer.from(message, 'utf8');
+      const signatureBuffer = Buffer.from(signature, 'base64');
+
+      const isValid = keypair.verify(messageBuffer, signatureBuffer);
 
       if (!isValid) {
-        const t = getTranslator(request.headers.get('accept-language'));
-        return NextResponse.json({ error: t('errors.invalid_signature') }, { status: 401 });
+        return NextResponse.json(
+          { error: t('errors.invalid_signature') || 'Invalid signature' },
+          { status: 401 }
+        );
       }
-    } catch {
-      const t = getTranslator(request.headers.get('accept-language'));
+
+      // Delete used nonce (one-time use)
+      deleteNonce(address);
+
+      // Create session cookie like from HEAD
+      const sealed = await createSession(address);
+      const cookieHeader = getSessionCookieHeader(sealed);
+
+      return new Response(
+        JSON.stringify({ 
+          success: true, 
+          token: `mock-jwt-${address.substring(0, 10)}`, // Keeping this property for compatibility with main branch frontend changes
+          address 
+        }),
+        {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/json',
+            'Set-Cookie': cookieHeader,
+          },
+        }
+      );
+
+    } catch (verifyError) {
+      console.error('Signature verification error:', verifyError);
       return NextResponse.json(
-        { error: t('errors.signature_verification_failed') },
+        { error: t('errors.signature_verification_failed') || 'Invalid signature' },
         { status: 401 }
       );
     }
 
-    const sealed = await createSession(address);
-    const cookieHeader = getSessionCookieHeader(sealed);
-
-    return new Response(
-      JSON.stringify({ ok: true, address }),
-      {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-          'Set-Cookie': cookieHeader,
-        },
-      }
-    );
-
-  } catch (err) {
-    console.error('Login error:', err);
+  } catch (error) {
+    console.error('Error during login:', error);
     const t = getTranslator(request.headers.get('accept-language'));
-    return NextResponse.json({ error: t('errors.internal_server_error') }, { status: 500 });
+    return NextResponse.json(
+      { error: t('errors.internal_server_error') || 'Internal Server Error' },
+      { status: 500 }
+    );
   }
 }

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getTranslator } from "@/lib/i18n";
-import { getPolicy } from "@/lib/contracts/insurance";
+import { getPolicy } from "@/lib/contracts/insurance-cached";
 import { validateAuth, unauthorizedResponse } from "@/lib/auth";
 
 // GET /api/insurance/:id
