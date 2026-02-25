@@ -29,7 +29,7 @@ export default function SavingsByGoalWidget({
       </div>
       
       {/* Subtitle */}
-      <p className="text-sm text-gray-400 mb-6">Where you're saving</p>
+      <p className="text-sm text-gray-400 mb-6">Where you&apos;re saving</p>
 
       {/* Goals List */}
       <div className="space-y-6">
