@@ -1,4 +1,12 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { getSession } from "@/lib/session";
+
+export class ApiError extends Error {
+  constructor(public statusCode: number, message: string) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
 
 /**
  * Validates the Authorization header.
@@ -20,4 +28,41 @@ export function unauthorizedResponse() {
     status: 401,
     headers: { "Content-Type": "application/json" },
   });
+}
+
+export type AuthenticatedHandler = (
+  request: NextRequest,
+  session: string
+) => Promise<Response> | Response;
+
+/**
+ * Higher-order function to protect API routes with authentication.
+ * It extracts the session (Stellar address) and passes it to the handler.
+ */
+export function withAuth(handler: AuthenticatedHandler) {
+  return async (request: NextRequest) => {
+    try {
+      const session = await getSession();
+      
+      if (!session?.address) {
+        return unauthorizedResponse();
+      }
+
+      return await handler(request, session.address);
+    } catch (error) {
+      console.error('Auth wrapper error:', error);
+      
+      if (error instanceof ApiError) {
+        return NextResponse.json(
+          { error: error.message },
+          { status: error.statusCode }
+        );
+      }
+
+      return NextResponse.json(
+        { error: 'Internal server error' },
+        { status: 500 }
+      );
+    }
+  };
 }
